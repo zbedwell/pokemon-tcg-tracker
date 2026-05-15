@@ -6,9 +6,9 @@ import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Select } from "../components/ui/Select";
-import { Search, Plus, Trash2, X } from "lucide-react";
+import { Search, Trash2, X } from "lucide-react";
 import toast from "react-hot-toast";
-import type { Card as PokemonCard, CollectionItem, Condition } from "../types";
+import type { Card as PokemonCard, Condition } from "../types";
 
 const CONDITIONS: Condition[] = ["NM", "LP", "MP", "HP", "DMG"];
 

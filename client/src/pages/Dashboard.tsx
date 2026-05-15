@@ -86,7 +86,7 @@ export function Dashboard() {
           value={fmt(summary?.totalProfit ?? 0)}
           sub={summary ? `${summary.roi.toFixed(1)}% ROI` : undefined}
           positive={summary ? summary.totalProfit >= 0 : undefined}
-          icon={summary?.totalProfit >= 0 ? TrendingUp : TrendingDown}
+          icon={(summary?.totalProfit ?? 0) >= 0 ? TrendingUp : TrendingDown}
         />
         <StatCard
           label="Transactions"

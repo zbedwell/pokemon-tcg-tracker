@@ -7,8 +7,6 @@ import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Select } from "../components/ui/Select";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -314,7 +312,7 @@ export function Analytics() {
               <Tooltip
                 contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: 8 }}
                 labelStyle={{ color: "#e5e7eb" }}
-                formatter={(v: number) => fmt(v)}
+                formatter={(v) => fmt(Number(v))}
               />
               <Bar dataKey="invested" name="Invested" fill="#3b82f6" radius={[4, 4, 0, 0]} />
               <Bar dataKey="revenue" name="Revenue" fill="#facc15" radius={[4, 4, 0, 0]} />
