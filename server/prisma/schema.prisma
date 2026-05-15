@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  collectionItems CollectionItem[]
+  transactions    Transaction[]
+}
+
+model CachedCard {
+  id         String   @id
+  name       String
+  setId      String
+  setName    String
+  number     String
+  rarity     String?
+  imageSmall String?
+  imageLarge String?
+  pricesJson String
+  updatedAt  DateTime @updatedAt
+
+  collectionItems CollectionItem[]
+  transactions    Transaction[]
+}
+
+model CollectionItem {
+  id            String    @id @default(cuid())
+  userId        String
+  cardId        String
+  quantity      Int       @default(1)
+  condition     String
+  purchasePrice Decimal?  @db.Decimal(10, 2)
+  purchaseDate  DateTime?
+  foil          Boolean   @default(false)
+  notes         String?
+  createdAt     DateTime  @default(now())
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card CachedCard @relation(fields: [cardId], references: [id])
+
+  @@unique([userId, cardId, condition, foil])
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String
+  cardId    String
+  type      String
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  condition String
+  foil      Boolean  @default(false)
+  platform  String?
+  date      DateTime
+  notes     String?
+  createdAt DateTime @default(now())
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card CachedCard @relation(fields: [cardId], references: [id])
+}
