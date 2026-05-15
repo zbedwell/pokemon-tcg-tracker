@@ -10,9 +10,20 @@ import analyticsRoutes from "./routes/analytics";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+].filter(Boolean) as string[];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const allowed =
+        allowedOrigins.some((o) => origin === o) ||
+        origin.endsWith(".vercel.app");
+      callback(allowed ? null : new Error("Not allowed by CORS"), allowed);
+    },
     credentials: true,
   })
 );
