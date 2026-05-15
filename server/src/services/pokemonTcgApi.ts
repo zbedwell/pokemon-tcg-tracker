@@ -19,6 +19,15 @@ export interface TcgPrices {
   "1stEditionHolofoil"?: { low: number; mid: number; market: number; high: number };
 }
 
+export interface CardmarketPrices {
+  averageSellPrice?: number;
+  trendPrice?: number;
+  avg30?: number;
+  lowPrice?: number;
+  reverseHoloTrend?: number;
+  reverseHoloAvg30?: number;
+}
+
 export interface ApiCard {
   id: string;
   name: string;
@@ -27,6 +36,7 @@ export interface ApiCard {
   images: { small: string; large: string };
   set: { id: string; name: string };
   tcgplayer?: { prices?: TcgPrices };
+  cardmarket?: { prices?: CardmarketPrices };
 }
 
 function staleCheck(updatedAt: Date): boolean {
@@ -81,7 +91,7 @@ async function cacheCards(cards: ApiCard[]) {
         rarity: card.rarity,
         imageSmall: card.images.small,
         imageLarge: card.images.large,
-        pricesJson: JSON.stringify(card.tcgplayer?.prices ?? {}),
+        pricesJson: JSON.stringify({ ...(card.tcgplayer?.prices ?? {}), cardmarket: card.cardmarket?.prices ?? null }),
       },
       update: {
         name: card.name,
@@ -91,7 +101,7 @@ async function cacheCards(cards: ApiCard[]) {
         rarity: card.rarity,
         imageSmall: card.images.small,
         imageLarge: card.images.large,
-        pricesJson: JSON.stringify(card.tcgplayer?.prices ?? {}),
+        pricesJson: JSON.stringify({ ...(card.tcgplayer?.prices ?? {}), cardmarket: card.cardmarket?.prices ?? null }),
       },
     });
   }

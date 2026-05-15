@@ -89,8 +89,9 @@ export interface AnalyticsSummary {
 
 export interface PortfolioData {
   items: (CollectionItem & {
-    marketPrice: number;
-    marketValue: number;
+    marketPrice: number | null;
+    priceSource: "tcgplayer" | "cardmarket" | null;
+    marketValue: number | null;
     costBasis: number | null;
     unrealizedGain: number | null;
   })[];

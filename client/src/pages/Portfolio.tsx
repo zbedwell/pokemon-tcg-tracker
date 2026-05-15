@@ -131,7 +131,7 @@ export function Portfolio() {
               </thead>
               <tbody>
                 {data.items
-                  .sort((a, b) => b.marketValue - a.marketValue)
+                  .sort((a, b) => (b.marketValue ?? 0) - (a.marketValue ?? 0))
                   .map((item) => (
                     <tr
                       key={item.id}
@@ -159,11 +159,20 @@ export function Portfolio() {
                       </td>
                       <td className="px-4 py-3 text-gray-300">{item.condition}</td>
                       <td className="px-4 py-3 text-right">{item.quantity}</td>
-                      <td className="px-4 py-3 text-right text-yellow-400">
-                        {item.marketPrice ? fmt(item.marketPrice) : "—"}
+                      <td className="px-4 py-3 text-right">
+                        {item.marketPrice != null ? (
+                          <span className="text-yellow-400">
+                            {fmt(item.marketPrice)}
+                            {item.priceSource === "cardmarket" && (
+                              <span className="ml-1 text-xs text-gray-500">CM</span>
+                            )}
+                          </span>
+                        ) : (
+                          <span className="text-gray-600 text-xs">No price data</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right font-medium">
-                        {fmt(item.marketValue)}
+                        {item.marketValue != null ? fmt(item.marketValue) : <span className="text-gray-600">—</span>}
                       </td>
                       <td className="px-4 py-3 text-right">
                         {item.costBasis != null ? fmt(item.costBasis) : (

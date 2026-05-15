@@ -99,18 +99,26 @@ router.get("/portfolio", authenticate, async (req: AuthRequest, res: Response) =
   const enriched = items.map((item) => {
     const prices = JSON.parse(item.card.pricesJson ?? "{}");
     const priceKey = item.foil ? "holofoil" : "normal";
-    const marketPrice = prices[priceKey]?.market ?? prices["holofoil"]?.market ?? prices["normal"]?.market ?? 0;
-    const itemMarketValue = marketPrice * item.quantity;
-    const costBasis = toNum(item.purchasePrice) * item.quantity;
-    totalMarketValue += itemMarketValue;
-    totalCostBasis += toNum(item.purchasePrice) ? costBasis : 0;
+
+    // TCGPlayer first, then Cardmarket trendPrice as fallback
+    const tcgPrice = prices[priceKey]?.market ?? prices["holofoil"]?.market ?? prices["normal"]?.market ?? null;
+    const cmPrice = prices["cardmarket"]?.trendPrice ?? prices["cardmarket"]?.averageSellPrice ?? prices["cardmarket"]?.avg30 ?? null;
+    const marketPrice: number | null = tcgPrice ?? cmPrice;
+    const priceSource: string | null = tcgPrice ? "tcgplayer" : cmPrice ? "cardmarket" : null;
+
+    const itemMarketValue = marketPrice != null ? marketPrice * item.quantity : null;
+    const costBasis = toNum(item.purchasePrice) ? toNum(item.purchasePrice) * item.quantity : null;
+
+    if (itemMarketValue != null) totalMarketValue += itemMarketValue;
+    if (costBasis != null) totalCostBasis += costBasis;
+
     return {
       ...item,
       marketPrice,
+      priceSource,
       marketValue: itemMarketValue,
-      costBasis: toNum(item.purchasePrice) ? costBasis : null,
-      unrealizedGain:
-        toNum(item.purchasePrice) ? itemMarketValue - costBasis : null,
+      costBasis,
+      unrealizedGain: itemMarketValue != null && costBasis != null ? itemMarketValue - costBasis : null,
     };
   });
 
